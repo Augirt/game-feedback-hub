@@ -16,7 +16,7 @@ function section(body, heading) {
 
 export function parseMetadata(body = '') {
   const values = Object.fromEntries(section(body, '迭代信息').split('\n').flatMap(line => {
-    const match = line.match(/^- (Day|Version|Role|Type|Priority):\s*(.*?)\s*$/)
+    const match = line.match(/^- (Day|Version|Role|Type|Priority|Ready):\s*(.*?)\s*$/)
     return match ? [[match[1], match[2]]] : []
   }))
   const day = /^[1-9]\d{0,5}$/.test(values.Day || '') ? Number(values.Day) : null
@@ -26,6 +26,7 @@ export function parseMetadata(body = '') {
     role: roles.includes(values.Role) ? values.Role : '',
     type: types.includes(values.Type) ? values.Type : 'idea',
     priority: priorities.includes(values.Priority) ? values.Priority : 'medium',
+    ready: values.Ready === 'yes',
     acceptance: section(body, '验收条件'),
     description: section(body, '详细描述'),
   }
@@ -51,6 +52,9 @@ export function normalizeIssue(issue) {
   else if (labels.includes('status: done')) status = 'done'
   else if (labels.includes('status: in progress')) status = 'in_progress'
   else if (labels.includes('status: planned')) status = 'planned'
+  // Read-only contributors cannot set labels. Preserve their explicit request
+  // in the body; the local runner still checks its independently trusted authors.
+  else if (!labels.some(label => label.startsWith('status:')) && meta.ready && meta.day && meta.version && meta.acceptance) status = 'planned'
   const description = meta.description || body.split('\n').find(line => line.trim() && !/^(?:#|>|<!--)/.test(line)) || '暂无详细描述'
   return {
     id: issue.id, number: issue.number, title: issue.title, description,
@@ -84,6 +88,7 @@ export function issueUrl(config, draft) {
     `- Role: ${roles.includes(draft.role) ? draft.role : ''}`,
     `- Type: ${types.includes(draft.type) ? draft.type : 'idea'}`,
     `- Priority: ${priorities.includes(draft.priority) ? draft.priority : 'medium'}`,
+    `- Ready: ${ready ? 'yes' : 'no'}`,
     '', '## 详细描述', draft.description.trim(), '', '## 验收条件', draft.acceptance?.trim() || '',
     '', '## 补充信息', `- 来源：${draft.source || '未填写'}`, `- 提交人：${draft.author || '匿名玩家'}`,
   ].join('\n')

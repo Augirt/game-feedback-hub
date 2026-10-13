@@ -198,3 +198,22 @@ test('browser sync rejects overlapping pages rather than claiming a complete sna
   await assert.rejects(fetchIssues(config))
   assert.equal(calls, 2)
 })
+
+
+test('explicit start confirmation survives GitHub dropping labels for read-only contributors', () => {
+  const body = new URL(issueUrl(config, draft())).searchParams.get('body')
+  assert.equal(parseMetadata(body).ready, true)
+  assert.equal(normalizeIssue(issue(1, {body, labels:[]})).status, 'planned')
+  const notReady = new URL(issueUrl(config, draft({ready:false}))).searchParams.get('body')
+  assert.equal(normalizeIssue(issue(1, {body:notReady, labels:[]})).status, 'inbox')
+  for (const replacement of ['- Day: 0', '- Day: ']) {
+    assert.equal(normalizeIssue(issue(1, {body:body.replace('- Day: 12',replacement)})).status,'inbox')
+  }
+})
+
+test('explicit triage labels override the start request in the body', () => {
+  const body = new URL(issueUrl(config, draft())).searchParams.get('body')
+  for (const [label,status] of [['inbox','inbox'],['blocked','blocked'],['cancelled','cancelled'],['testing','testing'],['done','done']]) {
+    assert.equal(normalizeIssue(issue(1,{body,labels:[`status: ${label}`]})).status,status)
+  }
+})

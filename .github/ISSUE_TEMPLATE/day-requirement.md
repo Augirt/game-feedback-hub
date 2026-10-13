@@ -10,6 +10,7 @@ labels: 'type: requirement, priority: medium, status: inbox'
 - Role: engineering
 - Type: requirement
 - Priority: medium
+- Ready: no
 
 ## 详细描述
 请填写现状、期望的改变和使用场景。一条 Issue 对应一个可独立验收的需求。
