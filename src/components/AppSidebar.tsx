@@ -36,6 +36,9 @@ export function AppSidebar({ activeType, counts, onTypeChange }: AppSidebarProps
           <button
             key={value}
             className={activeType === value ? 'nav-item active' : 'nav-item'}
+            aria-label={label}
+            aria-pressed={activeType === value}
+            title={label}
             onClick={() => onTypeChange(value)}
           >
             <Icon size={18} />

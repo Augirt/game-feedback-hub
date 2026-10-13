@@ -8,7 +8,7 @@ export function StatCards({ tickets }: StatCardsProps) {
   const recent = tickets.filter((ticket) => now - new Date(ticket.createdAt).getTime() < 7 * 86400000).length
   const stats = [
     { label: '全部条目', value: tickets.length, detail: '统一收集', icon: Layers3, tone: 'cobalt', trend: 'up' },
-    { label: '正在推进', value: tickets.filter((ticket) => ticket.status === 'in_progress').length, detail: '保持专注', icon: Zap, tone: 'coral', trend: 'up' },
+    { label: '正在推进', value: tickets.filter((ticket) => ['in_progress', 'testing', 'blocked'].includes(ticket.status)).length, detail: `待验收 ${tickets.filter((ticket) => ticket.status === 'testing').length} · 受阻 ${tickets.filter((ticket) => ticket.status === 'blocked').length}`, icon: Zap, tone: 'coral', trend: 'up' },
     { label: '已完成', value: tickets.filter((ticket) => ticket.status === 'done').length, detail: '持续交付', icon: CheckCircle2, tone: 'mint', trend: 'up' },
     { label: '近 7 日新增', value: recent, detail: '新鲜输入', icon: Clock3, tone: 'ochre', trend: recent ? 'up' : 'down' },
   ]

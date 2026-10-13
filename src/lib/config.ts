@@ -12,14 +12,12 @@ export function inferRepoFromLocation(): RepoConfig | null {
 }
 
 export function loadRepoConfig(): RepoConfig | null {
-  const saved = window.localStorage.getItem(STORAGE_KEY)
-  if (saved) {
-    try {
-      return JSON.parse(saved) as RepoConfig
-    } catch {
-      window.localStorage.removeItem(STORAGE_KEY)
-    }
-  }
+  try {
+    const saved = window.localStorage.getItem(STORAGE_KEY)
+    const value = saved ? JSON.parse(saved) : null
+    if (typeof value?.owner === 'string' && typeof value?.repo === 'string' &&
+        /^[\w.-]+$/.test(value.owner) && /^[\w.-]+$/.test(value.repo)) return value
+  } catch { /* Disabled storage or malformed old settings should not crash the app. */ }
   return inferRepoFromLocation()
 }
 

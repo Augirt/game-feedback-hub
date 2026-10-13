@@ -152,3 +152,56 @@ footer { padding: 13px 2px 2px; display: flex; justify-content: space-between; c
 }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* Day-based iteration keeps the existing warm paper, coral and cobalt palette. */
+.data-banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; padding: 16px 18px; border: 1px solid #d8dded; border-radius: 15px; background: #f0f3ff; }
+.data-banner-copy { display: flex; align-items: flex-start; gap: 11px; min-width: 0; color: #3659b3; }
+.data-banner-copy > svg { flex: 0 0 auto; margin-top: 2px; }
+.data-banner strong { display: block; font-size: 12px; line-height: 1.5; overflow-wrap: anywhere; }
+.data-banner p { margin: 4px 0 0; color: #626979; font-size: 11px; line-height: 1.6; overflow-wrap: anywhere; }
+.data-banner-actions { display: flex; flex-shrink: 0; gap: 8px; }
+.data-banner.demo { background: #fff6df; border-color: #e7d6a6; }.data-banner.demo .data-banner-copy { color: #8b6a23; }
+.data-banner.error { background: #fff0ec; border-color: #e7b8ad; }.data-banner.error .data-banner-copy { color: #ac4938; }.data-banner.error p { color: #914c40; }
+.data-banner.live { background: #eff7f3; border-color: #cadfd3; }.data-banner.live .data-banner-copy { color: #287654; }
+.filter-bar { flex-wrap: wrap; }
+.search-field { flex: 1 1 280px; width: auto; }
+.search-field button { display: grid; place-items: center; padding: 3px; border: 0; background: transparent; color: #777; }
+.priority-filter { min-width: 105px; max-width: 100%; }
+.priority-filter select { min-width: 0; max-width: 200px; width: 100%; height: 38px; }
+.version-filter { max-width: 230px; }
+.filter-summary { display: flex; align-items: center; gap: 12px; margin-left: auto; min-height: 30px; }
+.board-guidance { display: flex; align-items: baseline; flex-wrap: wrap; gap: 7px 12px; margin: 18px 0 13px; }
+.board-guidance > span { color: #49453e; font-size: 12px; font-weight: 750; }.board-guidance p { margin: 0; color: #746f66; font-size: 11px; line-height: 1.5; }
+.iteration-tags { display: flex; flex-wrap: wrap; align-items: center; gap: 5px; margin-top: 12px; }
+.iteration-tags > span { max-width: 100%; padding: 3px 6px; border-radius: 5px; background: #f0eee8; color: #71695b; font-size: 10px; line-height: 1.45; overflow-wrap: anywhere; }
+.iteration-tags .day-tag { background: #edf1fe; color: #3d59ac; font-weight: 700; }
+.ticket-card h3 { overflow-wrap: anywhere; }.ticket-description { overflow-wrap: anywhere; }
+.ticket-acceptance { margin-top: 12px; padding: 8px 9px; border-left: 2px solid #c4cfea; border-radius: 0 6px 6px 0; background: #f3f5f9; }
+.ticket-acceptance strong { color: #626e88; font-size: 9px; }.ticket-acceptance p { margin: 3px 0 0; color: #6f7481; font-size: 10px; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; white-space: pre-line; }
+.ticket-state-row { margin-top: 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ticket-status { padding: 3px 6px; border: 1px solid #d8d4ca; border-radius: 5px; color: #746e63; font-size: 9px; font-weight: 700; }
+.ticket-status.planned { border-color: #c6d0f1; color: #4260ad; background: #f1f4ff; }.ticket-status.in_progress { border-color: #efc3b9; color: #b14e3b; background: #fff1ed; }
+.ticket-status.testing { border-color: #cec7ea; color: #75609f; background: #f5f0fc; }.ticket-status.blocked { border-color: #e9c478; color: #90631e; background: #fff5df; }
+.ticket-status.done { border-color: #b9d9c7; color: #317653; background: #edf8f1; }.ticket-status.cancelled { border-style: dashed; color: #817b70; background: #f4f2ed; }
+.issue-number { font-size: 10px; color: #938d82; }
+.ticket-footer { flex-wrap: wrap; }.time { font-size: 9px; }
+.form-grid > .full { grid-column: 1 / -1; }
+.form-divider { border-top: 1px solid #dfdad1; padding-top: 17px; margin-top: 2px; }.form-divider > span { color: #4f5c82; font-size: 13px; font-weight: 750; }.form-divider p { margin: 4px 0 0; font-size: 11px; color: #8a8175; }
+.field-help { margin: -2px 0 0; color: #7e786f; font-size: 10px; line-height: 1.6; }
+.ready-check { display: flex; align-items: flex-start; gap: 10px; padding: 13px; border: 1px solid #ded8cb; border-radius: 11px; background: #f2efe7; cursor: pointer; }
+.ready-check input { width: 17px; height: 17px; flex: 0 0 auto; margin: 2px 0 0; accent-color: #3659e3; }.ready-check input:disabled { cursor: not-allowed; }
+.ready-check strong { display: block; font-size: 12px; color: #5d574d; }.ready-check small { display: block; margin-top: 4px; font-size: 10px; line-height: 1.5; color: #857b6c; }
+.ready-check.is-ready { border-color: #b4c4ed; background: #edf2ff; }.ready-check.is-ready strong { color: #3659ae; }
+.field textarea { padding-bottom: 22px; }
+@media (max-width: 1180px) { .topbar { flex-wrap: wrap; gap: 16px; }.topbar-actions { flex-wrap: wrap; }.data-banner { align-items: flex-start; } }
+@media (max-width: 720px) {
+  .data-banner { flex-direction: column; gap: 12px; padding: 14px; }.data-banner-actions { width: 100%; flex-wrap: wrap; }.data-banner-actions .secondary-button { flex: 1; }
+  .topbar { flex-wrap: nowrap; gap: 8px; }.topbar-actions { flex-wrap: nowrap; }.topbar h1 { font-size: 21px; }
+  .search-field { flex: 1 1 100%; }.priority-filter { flex: 1 1 calc(50% - 10px); max-width: none; }.priority-filter select { max-width: none; }.filter-summary { flex: 1 1 100%; justify-content: space-between; }
+  .kanban-board { margin-right: 0; grid-template-columns: repeat(4, minmax(260px, 82vw)); padding-bottom: 18px; }
+  .board-guidance { margin-top: 12px; }.board-guidance p { max-width: 100%; }
+  .modal-card { max-height: calc(100dvh - 20px); }.modal-heading p { line-height: 1.5; }.form-grid > .full { grid-column: 1 / -1; }
+  .toast { width: calc(100% - 32px); bottom: 80px; line-height: 1.5; }
+}
+
+@media (max-width: 720px) { .topbar-actions .icon-button:first-of-type { display: grid; } }

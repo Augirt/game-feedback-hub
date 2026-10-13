@@ -30,7 +30,7 @@ export function TopBar({ connection, config, onAdd, onRefresh, onSettings }: Top
           <RefreshCw size={18} className={connection === 'loading' ? 'spin' : ''} />
         </button>
         <button className="icon-button" onClick={onSettings} aria-label="仓库设置"><Settings2 size={18} /></button>
-        <button className="primary-button" onClick={onAdd}><Plus size={18} />提交新想法</button>
+        <button className="primary-button" onClick={onAdd}><Plus size={18} />新建需求</button>
       </div>
     </header>
   )
