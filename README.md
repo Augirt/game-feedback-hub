@@ -1,44 +1,67 @@
-# 迭代星图 · Day 工作流（v1.1.1）
+# 迭代星图 · 游戏开发工作台（v1.2.0）
 
-[打开需求中心](https://augirt.github.io/game-feedback-hub/) · [机器读取约定](https://augirt.github.io/game-feedback-hub/automation.json)
+[打开工作台](https://augirt.github.io/game-feedback-hub/) · [机器读取约定](https://augirt.github.io/game-feedback-hub/automation.json)
 
-GitHub Pages 页面以 `Augirt/game-feedback-hub` 的公开 Issues 为唯一需求源。保留灵感、需求、反馈、问题四种类型；新增 Day、目标版本、负责角色、验收条件、按批次筛选与全量 JSON 导出。
+工作台以 `Augirt/game-feedback-hub` 的公开 GitHub Issues 为存储，连接需求、版本交付和策划／程序／美术／测试的工作日志。游戏与需求系统分别记录版本，避免混淆。
+
+## 日常使用
+
+- **需求看板**：提交灵感、需求、反馈和问题，按 Day、版本、状态筛选；缺少迭代信息或受阻的事项会提示。
+- **团队日志**：四个角色分别填写修改计划、实际修改点、工作日志、验证结果、阻塞与下一步；可关联需求编号，并按角色、Day、版本、项目筛选，并通过关键词检索日期与内容。
+- **迭代版本**：集中查看版本目标、修改点、验收、已知问题和试玩入口。展开记录可追溯原始 Issue。
+
+点击「写工作日志」或「记录迭代版本」，填写后「准备提交」，再到 GitHub 确认创建。返回工作台刷新即可读取。未确认的表单只是本浏览器草稿，可以继续编辑或导出备份。提交前会实时检查同一草稿是否已有记录；限流时保留草稿，不使用旧快照判断是否重复。已有记录可在 GitHub 编辑；新一篇使用「另写一条」。
+
+角色代表团队职责，不代表四个独立登录账号。每条记录同时显示真实 GitHub 提交账号。所有内容公开，请只填写可公开的工作摘要，不填写密钥、私密材料或本地游戏源码。
 
 ## 提交一次 Day 需求
 
-1. 点击「新建需求」，填写标题和详细描述。
-2. 填写 Day（1–999999）、目标版本（例如 `v0.3.0`）、角色和验收条件。
-3. 范围确认后勾选「已确认，允许团队开始」，在 GitHub 登录并完成创建。此选项生成 `status: planned`；不勾选则进入待评估。
-4. 同一个 Day 可以提交多个 Issue；Day 是需求批次，版本是交付编号。修订已有需求时编辑原 Issue，保留其编号。
+1. 点击「新建需求」，填写标题和描述。
+2. 填写 Day（1–999999）、目标版本（例如 `v0.3.0`）、负责角色和验收条件。
+3. 确认范围后勾选「已确认，允许团队开始」，在 GitHub 完成创建；否则进入待评估。
+4. 相同 Day 可以有多个 Issue；Day 是批次，版本是交付。修改已有需求时编辑原 Issue，保留编号。
 
-自动执行候选必须由用户在开发团队中确认的提交账号创建（账号名单保存在本地开发配置中），状态为已规划且批次、版本和验收条件完整。其他参与者的反馈供策划评估，不自动成为开发指令。`Role` 是主责角色，不妨碍跨角色协作。
+自动开工候选仍须由开发团队本地确认的账号创建，状态为已规划，且 Day、版本和验收完整。工作日志、计划摘要和版本记录不会成为新的需求指令。日志中提到一个想法，也不代表已批准开工。
 
-所有内容保存在公开 GitHub Issues，请勿填写密钥或私密内容。表单只打开 GitHub 的草稿确认页，不会在网页保存 Token，也不会自动替用户发布 Issue。
+无标签设置权限时，正文中的 `Ready: yes` 加上完整 Day／版本／验收可映射为已规划；显式状态标签优先。本地任务仍单独校验已确认账号。
 
-## 状态与数据
+## 状态与证据
 
-- `status: inbox` 待评估；`status: planned` 已规划。
-- `status: in progress` 进行中；`status: testing` 待验收；`status: blocked` 受阻。
-- `status: done` 已完成；`status: cancelled` 已取消。
-- GitHub 以 `completed` 原因关闭才映射为已完成；以 `not_planned` 关闭映射为已取消。缺少关闭原因的历史条目按取消处理，避免虚报完成。
-- 标签类型：`type: idea/requirement/feedback/bug`；优先级：`priority: urgent/high/medium/low`。
+需求状态为 `inbox/planned/in_progress/testing/blocked/done/cancelled`。GitHub 以 `completed` 关闭才映射为完成；以 `not_planned` 关闭或缺少原因则映射为取消。
 
-读取完整分页并排除 PR。未配置仓库时明确显示示例；连接后初始为空；失败持续提示并禁止导出，不将示例或部分抓取结果冒充真实数据。JSON 导出始终包含全量真实条目，不受当前筛选影响。
+工作日志支持 `planned/in_progress/blocked/done`；版本记录支持 `planned/testing/released`。已计划须有计划；已完成、待验收、已发布须有实际修改点和验证结果；受阻须说明阻塞；已发布还须有 HTTPS 交付链接。字段完整只代表记录符合协议，真实验收仍由团队负责。补录历史工作须明确标注。
 
-## 无人值守读取
+## 读取、限流与导出
 
-不依赖浏览器保持打开。在登录 GitHub CLI 的机器上：
+网页优先全量分页读取实时 GitHub Issues。网络失败或 API 限流时，可回退到 GitHub Actions 生成的公开仓库快照，明确显示「仓库快照」及北京时间更新时间；它可能落后于刚提交的记录。数据格式损坏、重复记录或来源不符时直接报告错误，不用旧快照遮盖错误。没有可用数据时不冒充空结果。
+
+快照由推送、Issue 创建／编辑／关闭等事件触发重新部署，通常需等待构建完成。`workspace-snapshot.json` 是构建产物，不手动维护或提交。API Token 只在 Actions 或本机 `gh` 会话中使用，不进入网页、快照或日志。
+
+- 需求 JSON（schemaVersion 1）：仅包含真实需求，兼容既有每日提取任务。
+- 工作台 JSON（schemaVersion 2）：包含需求和工作记录，附数据时间及实时／快照来源；不受当前筛选影响。
+
+无人值守读取真实需求：
 
 ```bash
 node scripts/export-feedback.mjs --repo Augirt/game-feedback-hub --output /tmp/feedback.json
 # gh 不在 PATH 时追加 --gh /绝对路径/gh
 ```
 
-输出为 `{schemaVersion, source, repository, fetchedAt, tickets}`，每条含原文、稳定编号、更新时间、状态和迭代字段。脚本与网页共用 `src/lib/protocol.mjs`。API 任一分页失败、非法响应或重复 ID 时整次失败，不输出部分数据。访问令牌由现有 `gh` 登录管理，不写入网页、JSON 或日志。
+完整分页任一失败则整次失败。`public/automation.json` 是契约，不是快照。网页不会自行唤醒开发团队；本地定时任务负责提取、去重和协作，完成必须有验收及交付证据。
 
-`public/automation.json` 是读取约定，不是后台刷新的快照。网页本身不会定时唤醒开发团队；本地 Codex 定期任务负责读取、去重、派发和记录。提取成功不代表需求完成；完成必须有版本、验收和发布证据。
+## 团队写入记录
 
-Markdown 结构保存在 `.github/ISSUE_TEMPLATE/day-requirement.md`。标签优先于正文类型和优先级；Day、Version、Role 读取自 `## 迭代信息`，验收读取自 `## 验收条件`。旧 Issue 没有迭代字段时仍显示，留待补充。
+团队可通过同一协议持续写日志，无需操作浏览器。网页「导出草稿」得到的 JSON 可作为输入：
+
+```bash
+node scripts/publish-record.mjs --input /tmp/worklog.json --repo Augirt/game-feedback-hub
+# 默认预览，检查摘要后显式写入：
+node scripts/publish-record.mjs --input /tmp/worklog.json --repo Augirt/game-feedback-hub --write
+```
+
+每条记录有稳定 `key`；相同 key 更新原记录，内容未变则跳过。重复 key、并发改动、作者不符或记录类型不符会拒绝写入。建议 key 包含项目、Day、版本、角色和日期，不要为重试生成新 key。实际作者取自当前 `gh` 登录。CLI 默认预览，不在网页保存 Token。
+
+记录正文使用 `<!-- game-feedback-hub:record:v1 -->` 标记和 schemaVersion 1 JSON，下面附可读摘要。保留标记及结构化字段；网页按结构化数据展示。任何工作记录标记或专用类型标签（包括损坏记录）都被需求提取器排除，防止日志误触发开发。
 
 ## 开发与部署
 
@@ -49,8 +72,8 @@ npm ci
 npm test
 npm run dev
 npm run build
+# 本地需要验收限流回退时，先导出公开快照：
+node scripts/export-workspace-snapshot.mjs --repo Augirt/game-feedback-hub --output public/workspace-snapshot.json
 ```
 
-GitHub Actions 在 main/master 推送后运行测试和生产构建，部署到既有 GitHub Pages。根目录是需求页源码；游戏源码及本地开发台账不属于本仓库，不应一起上传。
-
-没有标签设置权限的提交者：页面也将开工确认保存到迭代信息的 `Ready: yes`。没有显式状态标签且Day、版本、验收完整时，读取为已规划；显式状态标签（包括待评估）始终优先。后台仍独立检查本地已确认账号，不因任意访客填写Ready而自动执行。
+GitHub Actions 运行测试、校验并导出全量公开快照、构建及部署到既有 GitHub Pages。此仓库仅存工作台源码；游戏源码、原始素材和私密开发台账不应上传。

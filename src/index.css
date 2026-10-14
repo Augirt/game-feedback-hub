@@ -205,3 +205,29 @@ footer { padding: 13px 2px 2px; display: flex; justify-content: space-between; c
 }
 
 @media (max-width: 720px) { .topbar-actions .icon-button:first-of-type { display: grid; } }
+
+/* Workspace shell and composer. Record views live in workspace.css. */
+.sidebar-intro { padding: 18px 9px; }
+.feedback-nav { border-top: 1px solid #ffffff18; margin-top: 16px; padding-top: 12px; }
+.feedback-nav .nav-item { padding-block: 8px; }
+.feedback-nav .nav-item span { font-size: 12px; }
+.mobile-type-filter { display: none; }
+.intake-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 14px 0 0; color: #726b60; font-size: 12px; }
+.intake-summary button { border: 0; background: none; color: #3659b3; font-weight: 600; padding: 5px 0; }
+.intake-summary button:disabled { color: #9a968d; cursor: not-allowed; }
+.record-notice { padding: 12px; background: #f1eee5; border-radius: 9px; color: #686157; font-size: 12px; line-height: 1.7; }
+.record-handoff { margin-top: 18px; padding: 16px; border: 1px solid #c5dccd; border-radius: 12px; background: #edf6ef; font-size: 13px; line-height: 1.7; }
+.record-handoff p { margin: 5px 0 12px; }
+.record-handoff a { width: fit-content; text-decoration: none; }
+@media (min-width: 721px) { .sidebar { overflow-y: auto; gap: 5px; }.sidebar-note { margin-top: 20px; flex-shrink: 0; } }
+@media (max-width: 720px) {
+  .sidebar .feedback-nav { display: none; }
+  .workspace-nav .nav-item { flex: 1; }
+  .workspace-nav .nav-item span { font-size: 11px; }
+  .mobile-type-filter { display: flex; align-items: center; gap: 8px; margin-top: 16px; color: #6a6256; font-size: 12px; }
+  .mobile-type-filter select { flex: 1; padding: 10px; border: 1px solid #d8d3c8; border-radius: 9px; background: white; }
+  .topbar h1 { font-size: 21px; }.record-modal .modal-actions > span { line-height: 1.6; }
+  .data-banner-actions { flex-wrap: wrap; }
+}
+
+.record-fields { border: 0; min-width: 0; margin: 0; padding: 0; }

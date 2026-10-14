@@ -1,4 +1,5 @@
 // Shared by the browser and the unattended reader. No credentials or DOM access.
+import { isWorkspaceRecord } from './records.mjs'
 export const SCHEMA_VERSION = 1
 export const roles = ['design', 'engineering', 'art', 'qa']
 const types = ['idea', 'requirement', 'feedback', 'bug']
@@ -33,7 +34,7 @@ export function parseMetadata(body = '') {
 }
 
 export function normalizeIssue(issue) {
-  if (issue.pull_request) return null
+  if (issue.pull_request || isWorkspaceRecord(issue)) return null
   if (!Number.isSafeInteger(issue.id) || !Number.isSafeInteger(issue.number) || issue.number < 1 ||
       typeof issue.title !== 'string' || !Array.isArray(issue.labels) ||
       !['open', 'closed'].includes(issue.state) || !Number.isFinite(Date.parse(issue.updated_at)) ||

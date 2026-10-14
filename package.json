@@ -1,14 +1,15 @@
 {
   "name": "game-feedback-hub",
   "private": true,
-  "version": "1.1.1",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
     "test": "node --test tests/*.test.mjs",
-    "export:feedback": "node scripts/export-feedback.mjs"
+    "export:feedback": "node scripts/export-feedback.mjs",
+    "publish:record": "node scripts/publish-record.mjs"
   },
   "dependencies": {
     "@vitejs/plugin-react": "latest",

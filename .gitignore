@@ -5,3 +5,6 @@ dist/
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts
+
+# Generated from public Issues during deployment; never a source fixture.
+public/workspace-snapshot.json

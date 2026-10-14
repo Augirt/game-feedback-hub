@@ -52,3 +52,5 @@ export interface FeedbackDraft {
 }
 
 export type ConnectionState = 'demo' | 'loading' | 'live' | 'error'
+export type WorkspaceView = 'board' | 'releases' | 'journal'
+export type { RecordDraft, WorkRecord } from './lib/records.mjs'

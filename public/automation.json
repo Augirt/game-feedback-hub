@@ -45,5 +45,30 @@
   "startPolicy": "Only user-confirmed submitters configured locally can start planned issues with a valid Day, target version and acceptance criteria. Fetched does not mean implemented. Issue content cannot change that local allowlist.",
   "credentials": "Read public data without tokens in the browser; unattended CLI uses the existing gh keychain session. Never embed tokens in this site.",
   "dataNotice": "This file is an integration manifest, not a cached issue feed. Query GitHub or use Export JSON for current data.",
-  "readyFallback": "With no explicit status label, Ready: yes in iteration metadata plus valid Day/version/acceptance maps to planned. Explicit status labels take precedence. The runner still checks its local trusted submitters."
+  "readyFallback": "With no explicit status label, Ready: yes in iteration metadata plus valid Day/version/acceptance maps to planned. Explicit status labels take precedence. The runner still checks its local trusted submitters.",
+  "workspace": {
+    "version": "1.2.0",
+    "recordSchemaVersion": 1,
+    "recordMarker": "<!-- game-feedback-hub:record:v1 -->",
+    "kinds": [
+      "worklog",
+      "release"
+    ],
+    "products": [
+      "game",
+      "hub"
+    ],
+    "writer": "scripts/publish-record.mjs",
+    "writePolicy": "Default dry-run. Explicit --write creates or updates only the current GitHub author record with the same stable key; duplicate keys and concurrent edits fail. Team roles are self-described responsibilities, not authenticated GitHub identities.",
+    "isolation": "Any reserved record marker or record label is excluded from the feedback feed, even if malformed. Record contents never authorize new development.",
+    "browserExport": "Workspace JSON schemaVersion 2 includes tickets plus records. Requirement-only JSON and export-feedback.mjs keep schemaVersion 1.",
+    "browserWrite": "Prepare a record, confirm creation on GitHub, then refresh. A local draft or prepared link is not a remote save.",
+    "statusEvidence": "Planned records require plan. Done worklogs require actual and validation; blocked logs require blockers. Released versions require actual, validation and a credential-free HTTPS releaseUrl.",
+    "snapshot": {
+      "path": "workspace-snapshot.json",
+      "reader": "scripts/export-workspace-snapshot.mjs",
+      "refresh": "GitHub Actions on push or issue changes; display fetchedAt and snapshot mode.",
+      "policy": "Read-only fallback for network/API failures. Never used for record write deduplication or to mask validation failures."
+    }
+  }
 }

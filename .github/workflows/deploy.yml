@@ -3,10 +3,13 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main, master]
+  issues:
+    types: [opened, edited, closed, reopened, labeled, unlabeled, deleted]
   workflow_dispatch:
 
 permissions:
   contents: read
+  issues: read
   pages: write
   id-token: write
 
@@ -28,6 +31,10 @@ jobs:
           cache: npm
       - run: npm ci --no-audit --no-fund
       - run: npm test
+      - name: Export public workspace snapshot
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/export-workspace-snapshot.mjs --repo "$GITHUB_REPOSITORY" --output public/workspace-snapshot.json
       - run: npm run build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
