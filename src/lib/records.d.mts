@@ -7,7 +7,8 @@ export interface RecordDraft {
   key: string
   product: RecordProduct
   title: string
-  day: number
+  /** Only release records may use null; worklogs require a positive Day. */
+  day: number | null
   version: string
   role: RecordRole | ''
   status: RecordStatus

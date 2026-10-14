@@ -6,7 +6,7 @@ import { join } from 'node:path'
 import test from 'node:test'
 import { fileURLToPath } from 'node:url'
 import { buildWorkspaceSnapshot } from '../scripts/export-workspace-snapshot.mjs'
-import { buildRecordBody } from '../src/lib/records.mjs'
+import { buildRecordBody, normalizeRecord } from '../src/lib/records.mjs'
 
 const script = fileURLToPath(new URL('../scripts/export-workspace-snapshot.mjs', import.meta.url))
 const repository = 'Augirt/game-feedback-hub'
@@ -16,9 +16,9 @@ const issue = (number, overrides = {}) => ({
   created_at: '2026-10-14T01:00:00Z', updated_at: '2026-10-14T02:00:00Z', comments: 0,
   html_url: `https://github.com/${repository}/issues/${number}`, other_private_data: 'omit this field', ...overrides,
 })
-const recordBody = (kind, key) => buildRecordBody({
+const recordBody = (kind, key, overrides = {}) => buildRecordBody({
   kind, key, product: 'hub', title: '团队记录', day: 1, version: '1.2.0', role: 'engineering', status: 'planned',
-  date: '2026-10-14', relatedIssues: [1], plan: '升级工作台', actual: '', log: '', validation: '', blockers: '', next: '',
+  date: '2026-10-14', relatedIssues: [1], plan: '升级工作台', actual: '', log: '', validation: '', blockers: '', next: '', ...overrides,
 })
 
 function fixture(t, response, fail = false) {
@@ -75,6 +75,15 @@ test('an empty successful response produces a valid stdout snapshot', t => {
   const result = f.run()
   assert.equal(result.status, 0, result.stderr)
   assert.deepEqual(JSON.parse(result.stdout).issues, [])
+})
+
+test('snapshot round trip retains null release Day alongside existing numeric Day records', () => {
+  const snapshot = buildWorkspaceSnapshot([[
+    issue(1, { body: recordBody('worklog', 'day-1-engineering') }),
+    issue(2, { body: recordBody('release', 'game-v0.3.0', { day: null }) }),
+  ]], repository)
+  const records = JSON.parse(JSON.stringify(snapshot)).issues.map(item => normalizeRecord(item))
+  assert.deepEqual(records.map(record => [record.kind, record.day]), [['worklog', 1], ['release', null]])
 })
 
 const brokenRecord = issue(2, { body: recordBody('worklog', 'broken').replace('record:v1', 'record:v2') })

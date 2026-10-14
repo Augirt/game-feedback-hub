@@ -61,7 +61,7 @@ export function AppSidebar({ activeType, counts, onTypeChange, view, onViewChang
       <div className="sidebar-note">
         <div className="note-spark">✦</div>
         <p>计划、改动与验证，<br />每个角色都有记录。</p>
-        <span>团队工作台 · v1.2.0</span>
+        <span>团队工作台 · v1.2.1</span>
       </div>
 
     </aside>

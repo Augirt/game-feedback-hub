@@ -47,7 +47,7 @@
   "dataNotice": "This file is an integration manifest, not a cached issue feed. Query GitHub or use Export JSON for current data.",
   "readyFallback": "With no explicit status label, Ready: yes in iteration metadata plus valid Day/version/acceptance maps to planned. Explicit status labels take precedence. The runner still checks its local trusted submitters.",
   "workspace": {
-    "version": "1.2.0",
+    "version": "1.2.1",
     "recordSchemaVersion": 1,
     "recordMarker": "<!-- game-feedback-hub:record:v1 -->",
     "kinds": [
@@ -59,6 +59,7 @@
       "hub"
     ],
     "writer": "scripts/publish-record.mjs",
+    "dayPolicy": "The day field is required. Worklogs require an integer from 1 to 999999. Since workspace 1.2.1, release records may explicitly use day: null for no associated Day; omitted, empty, zero or invalid values are rejected. Existing integer Day records, record schemaVersion 1, and requirement startPolicy are unchanged.",
     "writePolicy": "Default dry-run. Explicit --write creates or updates only the current GitHub author record with the same stable key; duplicate keys and concurrent edits fail. Team roles are self-described responsibilities, not authenticated GitHub identities.",
     "isolation": "Any reserved record marker or record label is excluded from the feedback feed, even if malformed. Record contents never authorize new development.",
     "browserExport": "Workspace JSON schemaVersion 2 includes tickets plus records. Requirement-only JSON and export-feedback.mjs keep schemaVersion 1.",

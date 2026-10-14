@@ -51,6 +51,34 @@ test('release records share plan/change/verification fields without requiring a 
   assert.throws(() => validateDraft(draft({ role: '' })), /角色/)
 })
 
+test('release records preserve an explicitly unassociated Day across all public record readers', () => {
+  const input = draft({ kind: 'release', key: 'game-v0.3.0', day: null, role: '', status: 'released', releaseUrl: 'https://example.com/game/' })
+  const body = buildRecordBody(input)
+  assert.match(body, /"day": null/)
+  assert.match(body, /- Day：未关联Day/)
+  assert.doesNotMatch(body, /Day[： ]+null/)
+  assert.deepEqual(parseRecord(body), validateDraft(input))
+  assert.equal(normalizeRecord(issue(body), config).day, null)
+  assert.equal(normalizeIssue(issue(body)), null)
+  const url = new URL(recordIssueUrl(config, input))
+  assert.equal(parseRecord(url.searchParams.get('body')).day, null)
+  for (const day of [1, 999999]) assert.equal(parseRecord(buildRecordBody({ ...input, day })).day, day)
+})
+
+test('nullable release Day does not weaken required worklog Day or accept implicit and malformed values', () => {
+  for (const kind of ['worklog', 'release']) {
+    for (const day of [undefined, '', 'null', '1', 0, -1, 1.5, 1000000, NaN, Infinity]) {
+      assert.throws(() => validateDraft(draft({ kind, status: 'planned', day })), /Day/)
+    }
+    const omitted = draft({ kind, status: 'planned' })
+    delete omitted.day
+    assert.throws(() => validateDraft(omitted), /Day/)
+  }
+  assert.throws(() => validateDraft(draft({ day: null })), /Day/)
+  const malformedWorklog = buildRecordBody(draft()).replace('"day": 1', '"day": null')
+  assert.throws(() => parseRecord(malformedWorklog), /Day/)
+})
+
 test('record status requires the minimum matching plan, blocker, completion, or release evidence', () => {
   assert.throws(() => validateDraft(draft({ status: 'planned', plan: ' ' })), /计划/)
   assert.throws(() => validateDraft(draft({ status: 'in_progress', plan: '', actual: '', log: '' })), /进行中/)

@@ -49,7 +49,7 @@ function matches(record: WorkRecord, filters: RecordFilters, tickets: Ticket[]) 
   const text = [record.title, record.plan, record.actual, record.log, record.validation, record.blockers, record.next, record.version, record.date, roleName(record.role), productName(record.product), ...relatedTitles].join(' ').toLocaleLowerCase()
   return (!query || text.includes(query))
     && (filters.role === 'all' || (filters.role === 'unassigned' ? !record.role : record.role === filters.role))
-    && (filters.day === 'all' || String(record.day) === filters.day)
+    && (filters.day === 'all' || (filters.day === 'unassociated' ? record.day === null : String(record.day) === filters.day))
     && (filters.version === 'all' || record.version === filters.version)
     && (filters.product === 'all' || record.product === filters.product)
     && (filters.status === 'all' || record.status === filters.status)
@@ -62,12 +62,12 @@ function hasFilters(filters: RecordFilters) {
 function RecordFilterBar({ records, filters, onChange, kind, count }: {
   records: WorkRecord[]; filters: RecordFilters; onChange: (filters: RecordFilters) => void; kind: 'worklog' | 'release'; count: number
 }) {
-  const days = [...new Set(records.map(record => record.day))].sort((a, b) => a - b)
+  const days = [...new Set(records.flatMap(record => record.day === null ? [] : [record.day]))].sort((a, b) => a - b)
   const versions = [...new Set(records.map(record => record.version).filter(Boolean))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
   return <section className="workspace-filters" aria-label={kind === 'worklog' ? '筛选团队日志' : '筛选版本记录'}>
     <label className="workspace-search"><span>关键词</span><div><Search size={16} aria-hidden="true" /><input value={filters.search} onChange={event => onChange({ ...filters, search: event.target.value })} placeholder="搜索标题、工作内容或关联需求" />{filters.search && <button type="button" onClick={() => onChange({ ...filters, search: '' })} aria-label="清空记录关键词"><X size={15} /></button>}</div></label>
     <label><span>产品</span><select value={filters.product} onChange={event => onChange({ ...filters, product: event.target.value })}><option value="all">全部产品</option><option value="game">逆时远征 · 游戏</option><option value="hub">迭代星图 · 需求系统</option></select></label>
-    <label><span>Day</span><select value={filters.day} onChange={event => onChange({ ...filters, day: event.target.value })}><option value="all">全部 Day</option>{days.map(day => <option key={day} value={String(day)}>Day {day}</option>)}</select></label>
+    <label><span>Day</span><select value={filters.day} onChange={event => onChange({ ...filters, day: event.target.value })}><option value="all">全部 Day</option>{records.some(record => record.day === null) && <option value="unassociated">未关联Day</option>}{days.map(day => <option key={day} value={String(day)}>Day {day}</option>)}</select></label>
     <label><span>版本</span><select value={filters.version} onChange={event => onChange({ ...filters, version: event.target.value })}><option value="all">全部版本</option>{versions.map(version => <option key={version} value={version}>{version}</option>)}</select></label>
     {kind === 'worklog' ? <label><span>负责角色</span><select value={filters.role} onChange={event => onChange({ ...filters, role: event.target.value })}><option value="all">全部角色</option>{team.map(item => <option key={item.role} value={item.role}>{item.name}</option>)}<option value="unassigned">未分工</option></select></label> : <label><span>版本状态</span><select value={filters.status} onChange={event => onChange({ ...filters, status: event.target.value })}><option value="all">全部状态</option>{statuses.map(status => <option key={status.value} value={status.value}>{status.label}</option>)}</select></label>}
     <div className="workspace-filter-result"><span role="status">{count} 条{kind === 'worklog' ? '日志' : '版本记录'}</span>{hasFilters(filters) && <button type="button" onClick={() => onChange(emptyFilters)}><X size={13} aria-hidden="true" />清除筛选</button>}</div>
@@ -94,7 +94,7 @@ function EmptyRecords({ kind, connection, filtered, onReset, onCreate }: {
 }
 
 function RecordBadges({ record, showRole = true }: { record: WorkRecord; showRole?: boolean }) {
-  return <div className="workspace-record-badges"><span className={`workspace-product ${record.product === 'game' ? 'game' : 'hub'}`}>{productName(record.product)}</span><span>Day {record.day}</span><span>{record.version || '版本待定'}</span>{showRole && <span>{roleName(record.role)}</span>}<span className={`workspace-status ${statuses.some(item => item.value === record.status) ? record.status : 'unknown'}`}>{statusName(record.status)}</span></div>
+  return <div className="workspace-record-badges"><span className={`workspace-product ${record.product === 'game' ? 'game' : 'hub'}`}>{productName(record.product)}</span><span>{record.day === null ? '未关联Day' : `Day ${record.day}`}</span><span>{record.version || '版本待定'}</span>{showRole && <span>{roleName(record.role)}</span>}<span className={`workspace-status ${statuses.some(item => item.value === record.status) ? record.status : 'unknown'}`}>{statusName(record.status)}</span></div>
 }
 
 function RecordSource({ record }: { record: WorkRecord }) {

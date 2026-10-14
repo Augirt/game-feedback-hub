@@ -114,6 +114,43 @@ test('--write creates once, returns real identity, and an identical rerun is unc
   assert.equal(existsSync(mutation.bodyFile), false)
 })
 
+test('a version without an associated Day can preview, create, read back and retry without duplication', t => {
+  const f = fixture(t)
+  const input = draft({ kind: 'release', key: 'game-v0.3.0', day: null, role: '', status: 'released', actual: '完成地形随机战场', validation: '发布验收通过', releaseUrl: 'https://example.com/game/' })
+  f.put(input)
+  const preview = f.run()
+  assert.equal(preview.status, 0, preview.stderr)
+  assert.equal(parseRecord(JSON.parse(preview.stdout).body).day, null)
+  assert.equal(f.state().writes, 0)
+  const first = f.run('--write')
+  assert.equal(first.status, 0, first.stderr)
+  assert.equal(JSON.parse(first.stdout).action, 'create')
+  assert.equal(parseRecord(f.state().issues[0].body).day, null)
+  assert.match(f.state().issues[0].body, /Day：未关联Day/)
+  const again = f.run('--write')
+  assert.equal(again.status, 0, again.stderr)
+  assert.equal(JSON.parse(again.stdout).action, 'unchanged')
+  assert.equal(f.state().issues.length, 1)
+  assert.equal(f.state().writes, 1)
+})
+
+test('missing or invalid release Day and null worklog Day are rejected before any CLI read or write', t => {
+  const f = fixture(t)
+  for (const input of [
+    draft({ kind: 'release', status: 'planned', day: undefined }),
+    draft({ kind: 'release', status: 'planned', day: '' }),
+    draft({ kind: 'release', status: 'planned', day: 0 }),
+    draft({ day: null }),
+  ]) {
+    f.put(input)
+    const result = f.run('--write')
+    assert.notEqual(result.status, 0)
+    assert.match(result.stderr, /Day/)
+  }
+  assert.equal(f.calls().length, 0)
+  assert.equal(f.state().writes, 0)
+})
+
 test('pagination finds an owned record beyond 100 and updates it instead of creating a duplicate', t => {
   const records = Array.from({ length: 105 }, (_, i) => issue(i + 1))
   records.push(issue(106, draft()))
@@ -193,7 +230,8 @@ test('old feedback exporter excludes valid and malformed workspace records witho
   const release = issue(3, draft({ kind: 'release', key: 'game-v0.2.1', status: 'released', role: '', actual: '滚轮缩放已上线', validation: '线上验收通过', releaseUrl: 'https://example.com/game/' }))
   const broken = issue(4, draft())
   broken.body = broken.body.replace('record:v1', 'record:v9')
-  const f = fixture(t, [issue(1), worklog, release, broken])
+  const unassociatedRelease = issue(5, draft({ kind: 'release', key: 'game-v0.3.0', day: null, status: 'planned', role: '' }))
+  const f = fixture(t, [issue(1), worklog, release, broken, unassociatedRelease])
   const result = spawnSync(process.execPath, [exportScript, '--repo', repository, '--gh', f.gh], { encoding: 'utf8', env: f.environment, timeout: 15000 })
   assert.equal(result.status, 0, result.stderr)
   assert.deepEqual(JSON.parse(result.stdout).tickets.map(item => item.number), [1])

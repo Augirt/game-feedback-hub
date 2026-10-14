@@ -12,7 +12,7 @@ export function RecordModal({ kind, role = '', config, onClose, onNeedSettings }
   kind: 'worklog' | 'release'; role?: TeamRole; config: RepoConfig | null; onClose: () => void; onNeedSettings: () => void
 }) {
   const storageKey = `iteration-workspace-draft:${config?.owner}/${config?.repo}:${kind}:${role}`
-  const freshDraft = (): RecordDraft => ({ kind, key: `web-${crypto.randomUUID()}`, product: 'game', title: '', day: 1, version: '', role: kind === 'release' ? '' : role || 'design', status: 'planned', date: beijingDate(), relatedIssues: [], plan: '', actual: '', log: '', validation: '', blockers: '', next: '', releaseUrl: '' })
+  const freshDraft = (): RecordDraft => ({ kind, key: `web-${crypto.randomUUID()}`, product: 'game', title: '', day: kind === 'release' ? null : 1, version: '', role: kind === 'release' ? '' : role || 'design', status: 'planned', date: beijingDate(), relatedIssues: [], plan: '', actual: '', log: '', validation: '', blockers: '', next: '', releaseUrl: '' })
   const [restored] = useState(() => {
     const initial = freshDraft()
     let relatedText = ''
@@ -24,6 +24,7 @@ export function RecordModal({ kind, role = '', config, onClose, onNeedSettings }
         if (typeof candidate.key === 'string' && /^[a-zA-Z0-9._-]{1,160}$/.test(candidate.key)) initial.key = candidate.key
         if (candidate.product === 'game' || candidate.product === 'hub') initial.product = candidate.product
         if (typeof candidate.day === 'number' && Number.isFinite(candidate.day)) initial.day = candidate.day
+        if (candidate.day === null && kind === 'release') initial.day = null
         if (['design','engineering','art','qa'].includes(candidate.role) && kind === 'worklog') initial.role = candidate.role
         if ((kind === 'release' ? ['planned','testing','released'] : ['planned','in_progress','blocked','done']).includes(candidate.status)) initial.status = candidate.status
         if (Array.isArray(candidate.relatedIssues)) initial.relatedIssues = candidate.relatedIssues.filter((n: unknown) => Number.isSafeInteger(n) && Number(n) > 0)
@@ -97,7 +98,7 @@ export function RecordModal({ kind, role = '', config, onClose, onNeedSettings }
           <label className="field full"><span>记录标题 *</span><input required value={draft.title} maxLength={120} onChange={e=>update('title',e.target.value)} placeholder={release ? '例如：v0.3.0 · 新敌人与战术调整' : '例如：程序 · 移动与镜头交互验收'}/></label>
           <label className="field"><span>所属项目</span><select value={draft.product} onChange={e=>update('product',e.target.value as RecordDraft['product'])}><option value="game">逆时远征 · 游戏</option><option value="hub">迭代星图 · 需求系统</option></select></label>
           <label className="field"><span>记录日期（北京时间） *</span><input type="date" required value={draft.date} onChange={e=>update('date',e.target.value)}/></label>
-          <label className="field"><span>关联 Day *</span><input required type="number" min={1} max={999999} value={draft.day || ''} onChange={e=>update('day',Number(e.target.value))}/></label>
+          <label className="field"><span>{release ? '关联 Day（选填）' : '关联 Day *'}</span><input required={!release} type="number" min={1} max={999999} value={draft.day ?? ''} placeholder={release ? '留空表示未关联Day' : undefined} onChange={e=>update('day',e.target.value === '' ? null : Number(e.target.value))}/></label>
           <label className="field"><span>迭代版本 *</span><input required value={draft.version} maxLength={80} placeholder="例如：v0.3.0" onChange={e=>update('version',e.target.value)}/></label>
           {!release && <label className="field"><span>团队角色</span><select value={draft.role} onChange={e=>update('role',e.target.value as TeamRole)}>{Object.entries(roleNames).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>}
           <label className="field"><span>当前状态</span><select value={draft.status} onChange={e=>update('status',e.target.value as RecordDraft['status'])}>{(release ? [['planned','已规划'],['testing','待验收'],['released','已发布']] : [['planned','已计划'],['in_progress','进行中'],['blocked','受阻'],['done','已完成']]).map(([value,label])=><option key={value} value={value}>{label}</option>)}</select></label>

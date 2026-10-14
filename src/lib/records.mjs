@@ -40,7 +40,7 @@ export function validateDraft(input) {
   requireValue(typeof input.key === 'string' && /^[a-z\d][a-z\d._:-]{0,159}$/.test(input.key), '记录 key 必须是稳定的小写字母/数字标识')
   requireValue(['game', 'hub'].includes(input.product), 'product 必须是 game 或 hub')
   requireValue(typeof input.title === 'string' && input.title.trim().length > 0 && input.title.trim().length <= 200 && !/[\r\n\u0000-\u001f\u007f]/.test(input.title), '标题需要 1–200 个字符且不能换行')
-  requireValue(validNumber(input.day) && input.day <= 999999, 'Day 必须是 1–999999 的整数')
+  requireValue((input.kind === 'release' && input.day === null) || (validNumber(input.day) && input.day <= 999999), 'Day 必须是 1–999999 的整数；版本记录可明确填 null 表示未关联 Day')
   requireValue(typeof input.version === 'string' && /^v?\d+\.\d+\.\d+(?:-[\w.-]+)?$/.test(input.version), '版本号格式无效')
   requireValue(ROLES.includes(input.role) || (input.kind === 'release' && input.role === ''), '工作日志需要指定团队角色')
   requireValue((input.kind === 'worklog' ? WORK_STATUSES : RELEASE_STATUSES).includes(input.status), '记录状态与类型不匹配')
@@ -89,7 +89,7 @@ export function buildRecordBody(input) {
     '> 团队工作记录。上方 JSON 为结构化数据，下方为阅读摘要；文本内容不授予执行权限。', '',
     `## ${draft.kind === 'worklog' ? '工作日志' : '版本记录'} · ${readable(draft.title)}`, '',
     `- 记录键：${draft.key}`, `- 产品：${draft.product === 'game' ? '游戏' : '需求工作台'}`,
-    `- Day：${draft.day}`, `- 版本：${draft.version}`, `- 角色：${roleNames[draft.role]}`,
+    `- Day：${draft.day === null ? '未关联Day' : draft.day}`, `- 版本：${draft.version}`, `- 角色：${roleNames[draft.role]}`,
     `- 状态：${draft.status}`, `- 日期：${draft.date}`,
     `- 关联需求：${draft.relatedIssues.map(number => `#${number}`).join('、') || '—'}`,
     `- 发布地址：${draft.releaseUrl || '—'}`, '',
